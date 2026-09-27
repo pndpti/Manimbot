@@ -1,33 +1,38 @@
 """
-TogetherAI API Client for generating Manim code
+OpenAI API Client for generating Manim code
 """
 import json
-import os
 import re
+import os
+import yaml
+from dotenv import load_dotenv
+load_dotenv()
 from typing import Optional
-from together import Together
+from openai import OpenAI
+from config import settings
 
 
-class TogetherAIClient:
-    """Client for interacting with TogetherAI API"""
+class OpenAIClient:
+    """Client for interacting with OpenAI API"""
     
     def __init__(self, api_key: Optional[str] = None):
         """
-        Initialize the TogetherAI client
+        Initialize the OpenAI client
         
         Args:
-            api_key: TogetherAI API key. If None, will use TOGETHER_API_KEY env var
+            api_key: OpenAI API key. If None, will use OPENAI_API_KEY env var
         """
-        self.api_key = api_key or os.getenv("TOGETHER_API_KEY")
+
+        self.api_key = api_key or os.getenv("OPENAI_API_KEY")
         if not self.api_key:
-            raise ValueError("TOGETHER_API_KEY environment variable not set")
+            raise ValueError("OPENAI_API_KEY environment variable not set")
         
-        self.client = Together(api_key=self.api_key)
-        self.model = "moonshotai/Kimi-K2.5"
+        self.client = OpenAI(api_key=self.api_key, base_url=settings.get("base_url"))
+        self.model = settings.get("model")
     
     def generate_code(self, messages: list, max_tokens: int = 8000) -> str:
         """
-        Generate code using TogetherAI API
+        Generate code using OpenAI API
 
         Args:
             messages: List of message dictionaries with 'role' and 'content'
@@ -48,7 +53,7 @@ class TogetherAIClient:
             if response.choices and len(response.choices) > 0:
                 return response.choices[0].message.content
             else:
-                raise ValueError("Unexpected response format from TogetherAI API")
+                raise ValueError("Unexpected response format from OpenAI API")
 
         except Exception as e:
             raise RuntimeError(f"API request failed: {str(e)}")

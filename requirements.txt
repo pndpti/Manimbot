@@ -2,7 +2,10 @@
 manim>=0.18.0
 
 # API and Network
-together
+openai
 
 # Environment Configuration
 python-dotenv
+
+# Config
+pyyaml

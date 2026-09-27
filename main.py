@@ -4,11 +4,12 @@ ManimAiGen - AI-powered Manim animation generation (Agentic Workflow)
 import sys
 from pathlib import Path
 from dotenv import load_dotenv
+from config import settings
 
 PROJECT_ROOT = Path(__file__).parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from generator.ai_client import TogetherAIClient
+from generator.ai_client import OpenAIClient
 from agents.orchestrator import Orchestrator
 
 
@@ -18,18 +19,17 @@ def load_environment():
     if env_path.exists():
         load_dotenv(env_path)
     else:
-        print("Warning: .env file not found. Set TOGETHER_API_KEY env var.")
-
+        print("Warning: .env file not found. Set OPENAI_API_KEY env var.")
 
 def main():
     load_environment()
 
     # Initialize AI client
     try:
-        ai_client = TogetherAIClient()
+        ai_client = OpenAIClient()
     except ValueError as e:
         print(f"Error: {e}")
-        print("\nCreate a .env file with: TOGETHER_API_KEY=your_key_here")
+        print("\nCreate a .env file with: OPENAI_API_KEY=your_key_here")
         sys.exit(1)
 
     # Get user request
